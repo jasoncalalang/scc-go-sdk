@@ -39,6 +39,7 @@ var (
 	err           error
 	config        map[string]string
 	collectorIds  []string
+	collectorId  string
 	credentialId  string
 	accountId     string
 	apiKey        string
@@ -54,7 +55,7 @@ var (
 var _ = Describe(`SCC test`, func() {
 	const externalConfigFile = "../posture_management_v1.env"
 
-	Describe(`Demo`, func() {
+		Describe(`Demo`, func() {
 
 		BeforeEach(func() {
 			_, err = os.Stat(externalConfigFile)
@@ -103,10 +104,10 @@ var _ = Describe(`SCC test`, func() {
 
 		})
 
-		//TODO fix collector issue -- skip for now
-		It(`Create Collector`, func() {
+		FIt(`Create Collector`, func() {
 			fmt.Println(`Create Collector`)
 			statusCode, id := examples.CreateCollector(options, accountId)
+			fmt.Println("collector id " + *id)
 			Expect(statusCode).To(Equal(201))
 			Expect(id).NotTo(BeNil())
 		})
@@ -125,10 +126,8 @@ var _ = Describe(`SCC test`, func() {
 		//TODO override collector id for now until create collector is resolved
 		It(`Create Scope`, func() {
 			fmt.Println(`Create Scope`)
-			collectorId := "822"
 			collectorIds = append(collectorIds, collectorId)
 			var statusCode int
-			credentialId = "1587"
 			statusCode, scopeId, scopeName = examples.CreateScope(options, accountId, credentialId, collectorIds)
 			fmt.Println("created scope id: " + *scopeId)
 			fmt.Println("created scope name: " + *scopeName)
