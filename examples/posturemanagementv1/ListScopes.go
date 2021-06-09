@@ -3,6 +3,7 @@ package examples
 import (
 	"fmt"
 	scc "github.com/ibm/scc-go-sdk/posturemanagementv1"
+	"time"
 )
 
 func ListScopes(options scc.PostureManagementV1Options, accountId string, scopeName string, scopeId string, matchString string) (bool, string) {
@@ -24,16 +25,12 @@ func ListScopes(options scc.PostureManagementV1Options, accountId string, scopeN
 
 	for _, scope := range reply.Scopes {
 		if *scope.ScopeID == scopeId {
-			fmt.Println("scope id " + *scope.ScopeID)
-			fmt.Println("scope name " + *scope.Name)
 			if scope.Scans != nil {
 				for _, scans := range scope.Scans {
 					scanId = *scans.ScanID
 					fmt.Println("scan id " + scanId)
-					fmt.Println("scan status " + *scans.Status)
-					//if *scans.Status == "discovery_completed" {
+					fmt.Println("scan status " + *scans.StatusMessage)
 					if *scans.Status == matchString {
-						fmt.Println("test pass")
 						return true, scanId
 					}
 				}
@@ -43,7 +40,8 @@ func ListScopes(options scc.PostureManagementV1Options, accountId string, scopeN
 		}
 	}
 
-	fmt.Println("in progress, re-checking...")
+	fmt.Println("in progress, re-checking in 30 seconds...")
+	time.Sleep(30 * time.Second)
 	return false, scanId
 
 }

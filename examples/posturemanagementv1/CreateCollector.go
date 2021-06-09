@@ -2,20 +2,21 @@ package examples
 
 import (
 	"fmt"
+	"github.com/IBM/go-sdk-core/v5/core"
 	"github.com/google/uuid"
 	scc "github.com/ibm/scc-go-sdk/posturemanagementv1"
 )
 
-func CreateCollector(options scc.PostureManagementV1Options, accountId string) (int, *string) {
+func CreateCollector(options scc.PostureManagementV1Options, accountId string, managedBy string) (int, *scc.Collector) {
 
 	service, _ := scc.NewPostureManagementV1(&options)
 
 	source := service.NewCreateCollectorOptions(accountId)
-	source.SetCollectorName("test-" + uuid.NewString())
-	source.SetCollectorDescription("test collector")
-	source.SetManagedBy("ibm")
-	source.SetIsPublic(true)
-	source.SetPassPhrase("secret")
+	source.CollectorName = core.StringPtr("test-" + uuid.NewString())
+	source.CollectorDescription = core.StringPtr("test collector")
+	source.ManagedBy = core.StringPtr(managedBy)
+	source.IsPublic = core.BoolPtr(true)
+	source.PassPhrase = core.StringPtr("secret")
 
 	reply, response, err := service.CreateCollector(source)
 
@@ -25,5 +26,5 @@ func CreateCollector(options scc.PostureManagementV1Options, accountId string) (
 		panic(err)
 	}
 
-	return response.StatusCode, reply.CollectorID
+	return response.StatusCode, reply
 }

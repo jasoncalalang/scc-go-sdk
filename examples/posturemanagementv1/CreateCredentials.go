@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func CreateCredentials(options scc.PostureManagementV1Options, accountId string, credentialPath string, pemPath string) (string, int) {
+func CreateCredentials(options scc.PostureManagementV1Options, accountId string, credentialPath string, pemPath string) (*scc.Credential, int) {
 	service, _ := scc.NewPostureManagementV1(&options)
 
 	credentialFile, _ := os.Open(credentialPath)
@@ -22,5 +22,5 @@ func CreateCredentials(options scc.PostureManagementV1Options, accountId string,
 		fmt.Println("Failed to create scope: ", err)
 		panic(err)
 	}
-	return *reply.CredentialID, response.GetStatusCode()
+	return reply, response.GetStatusCode()
 }
