@@ -2102,7 +2102,7 @@ type ResourceResult struct {
 	ResourceName *string `json:"resource_name,omitempty"`
 
 	// The resource type.
-	ResourcType *string `json:"resourc_type,omitempty"`
+	ResourceType *string `json:"resource_type,omitempty"`
 
 	// The resource control result status.
 	ResourceStatus *string `json:"resource_status,omitempty"`
@@ -2127,7 +2127,7 @@ func UnmarshalResourceResult(m map[string]json.RawMessage, result interface{}) (
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalPrimitive(m, "resourc_type", &obj.ResourcType)
+	err = core.UnmarshalPrimitive(m, "resource_type", &obj.ResourceType)
 	if err != nil {
 		return
 	}
