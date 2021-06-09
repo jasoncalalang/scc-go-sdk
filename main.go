@@ -38,13 +38,13 @@ func main() {
 		URL:           apiUrl,
 	}
 
-	//_, collectorId := scc.CreateCollector(options, accountId)
-
 	fmt.Println("Creating Collector")
 	_, collector := scc.CreateCollector(options, accountId, "customer")
 
 	fmt.Println("Collector created.")
 	fmt.Println("Collector ID: " + *collector.CollectorID)
+	fmt.Println("Press enter to continue...")
+	fmt.Scanln()
 
 	fmt.Println("Creating Credentials")
 	credentials, _ := scc.CreateCredentials(options, accountId, config["CREDENTIAL_PATH"], config["PEM_PATH"])
@@ -56,6 +56,9 @@ func main() {
 	//collectorIds = append(collectorIds, *collector.CollectorID)
 	collectorIds = append(collectorIds, "2082")
 
+	fmt.Println("Press enter to continue...")
+	fmt.Scanln()
+
 	fmt.Println("Creating Scope")
 	scope := scc.CreateScope(options, accountId, *credentials.CredentialID, collectorIds)
 
@@ -66,11 +69,19 @@ func main() {
 	fmt.Println("Scope Environment Type: " + *scope.EnvironmentType)
 	fmt.Println("Created time: " + scope.CreatedTime.String())
 	fmt.Println("Modified time: " + scope.ModifiedTime.String())
+	fmt.Println("Discovery Triggered.")
+
+	fmt.Println("Press enter to continue...")
+	fmt.Scanln()
 
 	fmt.Println("Checking Discovery Status:")
 	for scopeCondition == false {
 		scopeCondition, _ = scc.ListScopes(options, accountId, *scope.ScopeName, *scope.ScopeID, "discovery_completed")
 	}
+
+	fmt.Println("Press enter to continue...")
+	fmt.Scanln()
+
 	fmt.Println("Listing Profiles")
 	_, profiles := scc.ListProfiles(options, accountId)
 
@@ -80,7 +91,10 @@ func main() {
 		fmt.Println("Profile Description: ", *profile.Description)
 	}
 
-	fmt.Println("Creating Scan")
+	fmt.Println("Press enter to continue...")
+	fmt.Scanln()
+
+	fmt.Println("Triggered Validation Scan with IBM Cloud Best Practices Controls 1.0")
 	_, scanMessage := scc.InitiateValidationScan(options, accountId, *scope.ScopeID, "48")
 
 	fmt.Println("Scan initiated: " + *scanMessage)
@@ -90,6 +104,10 @@ func main() {
 	for scopeCondition == false {
 		scopeCondition, _ = scc.ListScopes(options, accountId, *scope.ScopeName, *scope.ScopeID, "validation_completed")
 	}
+
+	fmt.Println("Press enter to continue...")
+	fmt.Scanln()
+
 	fmt.Println("Listing Latest Scans:")
 	scansList := scc.ListLatestScans(options, accountId)
 
@@ -108,19 +126,53 @@ func main() {
 		fmt.Println("Scan Controls Total Count: ", *scan.Result.ControlsTotalCount)
 	}
 
+	fmt.Println("Press enter to continue...")
+	fmt.Scanln()
+
 	fmt.Println("Retrieving summary of scan " + scanId)
 	_, scanSummary := scc.RetrieveScanSummary(options, accountId, scanId, "48")
 	for _, control := range scanSummary.Controls {
 		fmt.Println("Control ID: " + *control.ControlID)
 		fmt.Println("Control Description: " + *control.ControlDesciption)
+		fmt.Println("Control Status: " + *control.Status)
+		for _, goal := range control.Goals {
+			fmt.Println("Goal Description: " + *goal.GoalDescription)
+			fmt.Println("Control Status: " + *goal.Status)
+			fmt.Println("Control Status: " + *goal.Severity)
+			for _, resource := range goal.ResourceResult {
+				fmt.Println("Resource name: " + *resource.ResourceName)
+				fmt.Println("Resource type: " + *resource.ResourcType)
+				fmt.Println("Resource status: " + *resource.ResourceStatus)
+				fmt.Println("Display Expected Value: " + *resource.DisplayExpectedValue)
+				fmt.Println("Actual Value: " + *resource.ActualValue)
+				fmt.Println("Results Info: " + *resource.ResultsInfo)
+				fmt.Println("NA Reason: " + *resource.NaReason)
+			}
+		}
 	}
+
+	fmt.Println("Press enter to continue...")
+	fmt.Scanln()
+
 
 	fmt.Println("Listing Validation Runs:")
 	_, summariesList := scc.ListValidationRuns(options, accountId, *scope.ScopeID, "48")
 
 	for _, summary := range summariesList.Summaries {
 		fmt.Println("Scan ID: " + *summary.ScanID)
-		fmt.Println("Scan Status: " + *summary.Status)
+		fmt.Println("Scan Name: " + *summary.ScanName)
+		fmt.Println("Scope Name: " + *summary.ScopeName)
+		fmt.Println("Validation Result for " + *summary.Profile.ProfileName)
+		fmt.Println("Goals Pass Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.GoalsPassCount, 10))
+		fmt.Println("Goals U2P Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.GoalsU2pCount, 10))
+		fmt.Println("Goals NA Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.GoalsNaCount, 10))
+		fmt.Println("Goals Fail Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.GoalsFailCount, 10))
+		fmt.Println("Goals Total Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.GoalsTotalCount, 10))
+		fmt.Println("Controls Pass Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.ControlsPassCount, 10))
+		fmt.Println("Controls U2P Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.ControlsU2pCount, 10))
+		fmt.Println("Controls NA Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.ControlsNaCount, 10))
+		fmt.Println("Controls Fail Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.ControlsFailCount, 10))
+		fmt.Println("Controls Total Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.ControlsTotalCount, 10))
 	}
 
 }
