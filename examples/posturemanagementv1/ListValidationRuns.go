@@ -5,7 +5,7 @@ import (
 	scc "github.com/ibm/scc-go-sdk/posturemanagementv1"
 )
 
-func ListValiadationRuns(options scc.PostureManagementV1Options, accountId string, scopeId string, profileId string) (int, scc.SummariesList) {
+func ListValidationRuns(options scc.PostureManagementV1Options, accountId string, scopeId string, profileId string) (int, scc.SummariesList) {
 	service, _ := scc.NewPostureManagementV1(&options)
 
 	source := service.NewScanSummariesOptions(scopeId, accountId, profileId)

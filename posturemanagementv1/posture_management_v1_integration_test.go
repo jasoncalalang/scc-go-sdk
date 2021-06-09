@@ -52,7 +52,7 @@ var (
 	options       scc.PostureManagementV1Options
 )
 
-var _ = Describe(`SCC test`, func() {
+var _ = Describe(`PostureManagementV1 Integration test`, func() {
 	const externalConfigFile = "../posture_management_v1.env"
 
 	Describe(`Demo`, func() {
@@ -104,7 +104,7 @@ var _ = Describe(`SCC test`, func() {
 
 		})
 
-		//TODO fix collector issue -- skip for now
+		//TODO collector issue -- skip for now
 		It(`Create Collector`, func() {
 			fmt.Println(`Create Collector`)
 			statusCode, id := examples.CreateCollector(options, accountId)
@@ -128,12 +128,11 @@ var _ = Describe(`SCC test`, func() {
 			fmt.Println(`Create Credential Successful`)
 		})
 
-		//TODO override collector id for now until create collector is resolved
 		It(`Create Scope`, func() {
 			fmt.Println(`Create Scope Started`)
 			var statusCode int
-			collectorId = "822"
-			credentialId = "1587"
+			//collectorId = "2067"
+			//credentialId = "1587"
 			collectorIds = append(collectorIds, collectorId)
 			statusCode, scopeId, scopeName = examples.CreateScope(options, accountId, credentialId, collectorIds)
 
@@ -145,7 +144,7 @@ var _ = Describe(`SCC test`, func() {
 			fmt.Println(`Create Scope Successful`)
 		})
 
-		XIt(`List Scopes`, func() {
+		It(`List Scopes`, func() {
 			fmt.Println(`List Scopes`)
 			demoListScope(options, scopeId)
 
@@ -153,7 +152,7 @@ var _ = Describe(`SCC test`, func() {
 				var isCompleted bool
 				isCompleted, scanId = examples.ListScopes(options, accountId, *scopeName, *scopeId, "discovery_completed")
 				return isCompleted
-			}, "12000s", "20s").Should(BeTrue())
+			}, "12000s", "30s").Should(BeTrue())
 			fmt.Println(`List Scope Successful`)
 		})
 
@@ -173,15 +172,15 @@ var _ = Describe(`SCC test`, func() {
 			Expect(message).ToNot(BeNil())
 			fmt.Println(`Create Scan Successful`)
 		})
-		XIt(`Check Scan Status`, func() {
+		It(`Check Scan Status`, func() {
 			fmt.Println(`Check Scan status`)
 			Eventually(func() bool {
 				var isCompleted bool
 				isCompleted, scanId = examples.ListScopes(options, accountId, *scopeName, *scopeId, "validation_completed")
 				return isCompleted
-			}, "12000s", "20s").Should(BeTrue())
+			}, "12000s", "30s").Should(BeTrue())
 		})
-		It(`List latest scans`, func() {
+		FIt(`List latest scans`, func() {
 			fmt.Println(`List latest scans`)
 			statusCode, list := examples.ListLatestScans(options, accountId)
 			Expect(statusCode).To(Equal(200))
@@ -191,19 +190,27 @@ var _ = Describe(`SCC test`, func() {
 
 		})
 
-		It(`Read scan`, func() {
+		FIt(`Read scan`, func() {
 			fmt.Println(`Read scan summary details`)
-			statusCode, list := examples.RetrieveScanSummary(options, accountId, scanId, "48")
+			statusCode, list := examples.RetrieveScanSummary(options, accountId, "28569", "48")
 			Expect(statusCode).To(Equal(200))
-			Expect(list).ToNot(BeNil())
+			Expect(list.Controls).ToNot(BeNil())
 			fmt.Println(`Read scan summary details successful`)
 		})
 
-		It(`List Validation Runs`, func() {
+		FIt(`List Validation Runs`, func() {
 			fmt.Println(`List Validation Runs`)
-			statusCode, list := examples.ListValiadationRuns(options, accountId, "17885", "48")
+			statusCode, list := examples.ListValidationRuns(options, accountId, "28569", "48")
 			Expect(statusCode).To(Equal(200))
-			Expect(list).ToNot(BeNil())
+			Expect(list.Summaries).ToNot(BeNil())
+			for _, summary := range list.Summaries {
+				fmt.Println("scan id: " + *summary.ScanID)
+				fmt.Println("Controls pass count:  " , int(*summary.Profile.ValidationResult.ControlsPassCount))
+				fmt.Println("Controls na count:  " , int(*summary.Profile.ValidationResult.ControlsNaCount))
+				fmt.Println("Controls fail count:  " , int(*summary.Profile.ValidationResult.ControlsFailCount))
+				fmt.Println("Controls u2p count:  " , int(*summary.Profile.ValidationResult.ControlsU2pCount))
+				fmt.Println("Controls total count:  " , int(*summary.Profile.ValidationResult.ControlsTotalCount))
+			}
 			fmt.Println(`List Validation Runs Successful`)
 		})
 

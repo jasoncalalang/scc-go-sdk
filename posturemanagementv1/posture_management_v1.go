@@ -3122,7 +3122,7 @@ func UnmarshalSummariesList(m map[string]json.RawMessage, result interface{}) (e
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalModel(m, "summaries", &obj.Summaries, UnmarshalSummaryItem)
+	err = core.UnmarshalModel(m, "scan_summaries", &obj.Summaries, UnmarshalSummaryItem)
 	if err != nil {
 		return
 	}
