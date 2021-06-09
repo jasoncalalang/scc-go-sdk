@@ -129,8 +129,8 @@ func main() {
 	fmt.Println("Press enter to continue...")
 	fmt.Scanln()
 
-	fmt.Println("Retrieving summary of scan " + scanId)
-	_, scanSummary := scc.RetrieveScanSummary(options, accountId, scanId, "48")
+	fmt.Println("Retrieving summary of scan " + "32821")
+	_, scanSummary := scc.RetrieveScanSummary(options, accountId, "32821", "48")
 	for _, control := range scanSummary.Controls {
 		fmt.Println("Control ID: " + *control.ControlID)
 		fmt.Println("Control Description: " + *control.ControlDesciption)
@@ -140,13 +140,15 @@ func main() {
 			fmt.Println("Control Status: " + *goal.Status)
 			fmt.Println("Control Status: " + *goal.Severity)
 			for _, resource := range goal.ResourceResult {
-				fmt.Println("Resource name: " + *resource.ResourceName)
-				fmt.Println("Resource type: " + *resource.ResourcType)
-				fmt.Println("Resource status: " + *resource.ResourceStatus)
-				fmt.Println("Display Expected Value: " + *resource.DisplayExpectedValue)
-				fmt.Println("Actual Value: " + *resource.ActualValue)
-				fmt.Println("Results Info: " + *resource.ResultsInfo)
-				fmt.Println("NA Reason: " + *resource.NaReason)
+				if resource.ResourceName != nil {
+					fmt.Println("Resource name: " + *resource.ResourceName)
+					fmt.Println("Resource type: " + *resource.ResourceType)
+					fmt.Println("Resource status: " + *resource.ResourceStatus)
+					fmt.Println("Display Expected Value: " + *resource.DisplayExpectedValue)
+					fmt.Println("Actual Value: " + *resource.ActualValue)
+					fmt.Println("Results Info: " + *resource.ResultsInfo)
+					fmt.Println("NA Reason: " + *resource.NaReason)
+				}
 			}
 		}
 	}
@@ -154,15 +156,14 @@ func main() {
 	fmt.Println("Press enter to continue...")
 	fmt.Scanln()
 
-
 	fmt.Println("Listing Validation Runs:")
-	_, summariesList := scc.ListValidationRuns(options, accountId, *scope.ScopeID, "48")
+	_, summariesList := scc.ListValidationRuns(options, accountId, "28632", "48")
 
 	for _, summary := range summariesList.Summaries {
 		fmt.Println("Scan ID: " + *summary.ScanID)
 		fmt.Println("Scan Name: " + *summary.ScanName)
 		fmt.Println("Scope Name: " + *summary.ScopeName)
-		fmt.Println("Validation Result for " + *summary.Profile.ProfileName)
+		fmt.Println("\nValidation Result for " + *summary.Profile.ProfileName)
 		fmt.Println("Goals Pass Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.GoalsPassCount, 10))
 		fmt.Println("Goals U2P Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.GoalsU2pCount, 10))
 		fmt.Println("Goals NA Count: " + strconv.FormatInt(*summary.Profile.ValidationResult.GoalsNaCount, 10))
