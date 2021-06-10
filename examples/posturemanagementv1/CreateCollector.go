@@ -15,7 +15,7 @@ func CreateCollector(options scc.PostureManagementV1Options, accountId string, m
 
 	source := service.NewCreateCollectorOptions(accountId)
 	source.CollectorName = core.StringPtr("DEMO SDK IBM Managed Collector " + uid)
-	source.CollectorDescription = core.StringPtr("This is an IBM Managed collector created from the SCC SDK")
+	source.CollectorDescription = core.StringPtr("This is an IBM-managed collector created from the SCC SDK")
 	source.ManagedBy = core.StringPtr(managedBy)
 	source.IsPublic = core.BoolPtr(true)
 	source.PassPhrase = core.StringPtr("secret")
