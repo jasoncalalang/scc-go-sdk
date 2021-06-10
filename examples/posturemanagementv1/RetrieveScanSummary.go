@@ -20,7 +20,7 @@ func RetrieveScanSummary(options scc.PostureManagementV1Options, accountId strin
 		return
 	}
 
-	out, err := json.Marshal(reply)
+	out, err := json.MarshalIndent(reply, "", "\t")
 	if err != nil {
 		fmt.Println("Failed to marshal json file: ", err)
 		return

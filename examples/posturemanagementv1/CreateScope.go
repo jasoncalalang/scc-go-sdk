@@ -1,6 +1,7 @@
 package examples
 
 import (
+	"encoding/hex"
 	"fmt"
 	"github.com/google/uuid"
 	scc "github.com/ibm/scc-go-sdk/posturemanagementv1"
@@ -8,10 +9,11 @@ import (
 
 func CreateScope(options scc.PostureManagementV1Options, accountId string, credentialId string, collectorIds []string) *scc.Scope {
 	service, _ := scc.NewPostureManagementV1(&options)
+	uid := hex.EncodeToString(uuid.New().NodeID()[:4])
 
 	source := service.NewCreateScopeOptions(accountId)
-	source.SetScopeName("SDKDEMO" + uuid.NewString())
-	source.SetScopeDescription("sample scope description")
+	source.SetScopeName("SDK DEMO " + uid)
+	source.SetScopeDescription("This is a scope created from the SCC SDK")
 	source.SetEnvironmentType("ibm")
 	source.SetCollectorIds(collectorIds)
 	source.SetCredentialID(credentialId)

@@ -38,6 +38,7 @@ func main() {
 	}
 
 	fmt.Println("Creating IBM-Managed Collector...")
+	fmt.Println("Calling API #1 - Create Collector")
 	_, collector := scc.CreateCollector(options, accountId, "ibm")
 
 	fmt.Println("Collector created.")
@@ -46,6 +47,7 @@ func main() {
 	fmt.Scanln()
 
 	fmt.Println("Creating Credentials...")
+	fmt.Println("Calling API #2 - Create Credentials")
 	credentials, _ := scc.CreateCredentials(options, accountId, config["CREDENTIAL_PATH"], config["PEM_PATH"])
 	fmt.Println("Credentials created.")
 	fmt.Println("Credential ID: " + *credentials.CredentialID)
@@ -59,6 +61,7 @@ func main() {
 	fmt.Scanln()
 
 	fmt.Println("Creating Scope...")
+	fmt.Println("Calling API #3 - Create Scope")
 	scope := scc.CreateScope(options, accountId, *credentials.CredentialID, collectorIds)
 
 	fmt.Println("Scope created.")
@@ -75,13 +78,15 @@ func main() {
 
 	fmt.Println("Checking Discovery Status...")
 	for scopeCondition == false {
+		fmt.Println("Calling API #4 - List Scopes")
 		scopeCondition, _ = scc.ListScopes(options, accountId, *scope.ScopeName, *scope.ScopeID, "discovery_completed")
 	}
 
 	fmt.Println("Press enter to continue...")
 	fmt.Scanln()
 
-	fmt.Println("Listing Profiles...")
+	fmt.Println("Fetching profile to be used...")
+	fmt.Println("Calling API #5 - List Profiles")
 	_, profiles := scc.ListProfiles(options, accountId)
 
 	for _, profile := range profiles {
@@ -93,10 +98,14 @@ func main() {
 	fmt.Println("Press enter to continue...")
 	fmt.Scanln()
 
-	fmt.Println("Triggered Validation Scan with IBM Cloud Best Practices Controls 1.0")
+	fmt.Println("Triggering Validation Scan with IBM Cloud Best Practices Controls 1.0...")
+	fmt.Println("Calling API #6 - Initiate Validation Scan")
 	_, scanMessage := scc.InitiateValidationScan(options, accountId, *scope.ScopeID, "48")
 
-	fmt.Println("Scan initiated: " + *scanMessage)
+	fmt.Println(*scanMessage)
+
+	fmt.Println("\nPress enter to continue...")
+	fmt.Scanln()
 
 	fmt.Println("Checking Scan Status...")
 	scopeCondition = false
@@ -108,7 +117,8 @@ func main() {
 	fmt.Scanln()
 
 	scansList := scc.ListLatestScans(options, accountId)
-	fmt.Println("Showing scan of " + *scansList.LatestScans[0].ScanID) //showing scan id "scanId"
+	fmt.Println("Calling API #7 - List Latest Scans")
+	fmt.Println("Showing scan of " + *scansList.LatestScans[0].ScanName) //showing scan id "scanId"
 
 	if scansList.LatestScans != nil {
 		scanId = *scansList.LatestScans[0].ScanID
@@ -126,7 +136,9 @@ func main() {
 	fmt.Scanln()
 
 	fmt.Println("Retrieving summary of scan " + scanId + "...")
+	fmt.Println("Calling API #8 - Retrieve the summary of a specific scan")
 	scc.RetrieveScanSummary(options, accountId, scanId, "48")
+	fmt.Println("Output generated to scans.json for reference in this demo")
 
 	fmt.Println("Press enter to continue...")
 	fmt.Scanln()
